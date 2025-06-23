@@ -4,10 +4,9 @@ import lk.acpt.course_management_system.dto.InstructorDto;
 import lk.acpt.course_management_system.dto.UserDto;
 import lk.acpt.course_management_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -16,9 +15,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @GetMapping
+    public ArrayList<UserDto> getAllUsers(){
+        ArrayList<UserDto> users = (ArrayList<UserDto>) userService.getAllUsers();
+        if (users != null) {
+            return users;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     @PostMapping
     public UserDto saveUser(@RequestBody  UserDto userDto) {
-
         UserDto savedUser = userService.saveUser(userDto);
         if (savedUser != null) {
             return savedUser;
