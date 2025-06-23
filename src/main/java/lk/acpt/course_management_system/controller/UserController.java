@@ -21,7 +21,17 @@ public class UserController {
         if (users != null) {
             return users;
         } else {
-            return new ArrayList<>();
+            return null;
+        }
+    }
+
+    @GetMapping("/{id}")
+    public UserDto getUserById(@PathVariable Integer id){
+        UserDto user = userService.getUserById(id);
+        if (user != null) {
+            return user;
+        } else {
+            return null;
         }
     }
 
