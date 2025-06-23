@@ -1,6 +1,5 @@
-package lk.acpt.course_management_system.entity;
+package lk.acpt.course_management_system.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,17 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDto {
     private Integer id;
     private String name;
     private String email;
     private String password;
     private String role;
     private Long contactNumber;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Instructor instructor;
+    private InstructorDto instructor; // Assuming InstructorDto is defined elsewhere
 }
