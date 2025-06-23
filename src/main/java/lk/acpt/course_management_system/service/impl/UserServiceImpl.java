@@ -60,7 +60,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
+    public UserDto updateUser(Integer id, UserDto userDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        User existingUser = userRepo.findById(id).orElse(null);
+        if (existingUser != null) {
+            // Update user fields
+            existingUser.setName(userDto.getName());
+            existingUser.setEmail(userDto.getEmail());
+            existingUser.setPassword(userDto.getPassword());
+            existingUser.setRole(userDto.getRole());
+            existingUser.setContactNumber(userDto.getContactNumber());
+
+            // If instructor details are provided, update or create the instructor
+            if (userDto.getInstructor() != null) {
+                Instructor existingInstructor = instructorRepo.findByUserId(id).orElse(null);
+                if (existingInstructor != null) {
+                    existingInstructor.setQualification(userDto.getInstructor().getQualification());
+                    instructorRepo.save(existingInstructor);
+                } else {
+                    return null;
+                }
+            }
+
+            User updatedUser = userRepo.save(existingUser);
+            return modelMapper.map(updatedUser, UserDto.class);
+        }
         return null;
     }
 
