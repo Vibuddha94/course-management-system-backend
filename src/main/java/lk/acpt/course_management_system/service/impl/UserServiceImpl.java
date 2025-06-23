@@ -66,6 +66,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean deleteUser(Integer id) {
-        return null;
+    if (userRepo.existsById(id)) {
+        instructorRepo.deleteByUserId(id);
+        if (instructorRepo.findByUserId(id).isEmpty()) {
+            userRepo.deleteById(id);
+        }
+        return !userRepo.existsById(id);
+    }
+        return false;
     }
 }

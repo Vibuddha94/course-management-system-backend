@@ -35,6 +35,11 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public Boolean deleteUser(@PathVariable Integer id){
+        return userService.deleteUser(id);
+    }
+
     @PostMapping
     public UserDto saveUser(@RequestBody  UserDto userDto) {
         UserDto savedUser = userService.saveUser(userDto);
