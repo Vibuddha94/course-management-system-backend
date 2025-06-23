@@ -16,26 +16,22 @@ public class UserController {
 
     @GetMapping
     public ArrayList<UserDto> getAllUsers(){
-        ArrayList<UserDto> users = (ArrayList<UserDto>) userService.getAllUsers();
-        return users;
+        return (ArrayList<UserDto>) userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Integer id){
-        UserDto user = userService.getUserById(id);
-        return user;
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public UserDto saveUser(@RequestBody  UserDto userDto) {
-        UserDto savedUser = userService.saveUser(userDto);
-        return savedUser;
+        return userService.saveUser(userDto);
     }
 
     @PutMapping("/{id}")
     public UserDto updateUser(@PathVariable Integer id, @RequestBody UserDto userDto) {
-        UserDto updatedUser = userService.updateUser(id, userDto);
-        return updatedUser;
+        return userService.updateUser(id, userDto);
     }
 
     @DeleteMapping("/{id}")
