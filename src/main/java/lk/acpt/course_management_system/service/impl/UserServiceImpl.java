@@ -16,11 +16,15 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
+
+    private final InstructorRepo instructorRepo;
 
     @Autowired
-    private InstructorRepo instructorRepo;
+    public UserServiceImpl(UserRepo userRepo, InstructorRepo instructorRepo) {
+        this.userRepo = userRepo;
+        this.instructorRepo = instructorRepo;
+    }
 
     @Override
     public UserDto saveUser(UserDto userDto) {
