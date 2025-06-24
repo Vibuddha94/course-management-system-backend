@@ -14,5 +14,6 @@ public class UserDto {
     private String password;
     private String role;
     private Long contactNumber;
-    private InstructorDto instructor; // Assuming InstructorDto is defined elsewhere
+    private InstructorDto instructor;
+    private StudentDto student;
 }

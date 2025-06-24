@@ -2,8 +2,10 @@ package lk.acpt.course_management_system.service.impl;
 
 import lk.acpt.course_management_system.dto.UserDto;
 import lk.acpt.course_management_system.entity.Instructor;
+import lk.acpt.course_management_system.entity.Student;
 import lk.acpt.course_management_system.entity.User;
 import lk.acpt.course_management_system.repo.InstructorRepo;
+import lk.acpt.course_management_system.repo.StudentRepo;
 import lk.acpt.course_management_system.repo.UserRepo;
 import lk.acpt.course_management_system.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -20,15 +22,19 @@ public class UserServiceImpl implements UserService {
 
     private final InstructorRepo instructorRepo;
 
+    private final StudentRepo studentRepo;
+
+    ModelMapper modelMapper = new ModelMapper();
+
     @Autowired
-    public UserServiceImpl(UserRepo userRepo, InstructorRepo instructorRepo) {
+    public UserServiceImpl(UserRepo userRepo, InstructorRepo instructorRepo, StudentRepo studentRepo) {
         this.userRepo = userRepo;
         this.instructorRepo = instructorRepo;
+        this.studentRepo = studentRepo;
     }
 
     @Override
     public UserDto saveUser(UserDto userDto) {
-        ModelMapper modelMapper = new ModelMapper();
         // Map UserDto to User entity
         User user = modelMapper.map(userDto, User.class);
         if (userDto.getInstructor() != null) {
@@ -39,13 +45,21 @@ public class UserServiceImpl implements UserService {
             user.setInstructor(instructor);
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
+        }else if (userDto.getStudent() != null) {
+            // Map StudentDto to Student entity
+            Student student = modelMapper.map(userDto.getStudent(), Student.class);
+            // Set bidirectional relationship
+            student.setUser(user);
+            user.setStudent(student);
+            User savedUser = userRepo.save(user);
+            return modelMapper.map(savedUser, UserDto.class);
+        } else {
+            return  null;
         }
-        return  null;
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        ModelMapper modelMapper = new ModelMapper();
         ArrayList<UserDto> users = new ArrayList<>();
         for(User user: userRepo.findAll()){
             users.add(modelMapper.map(user,UserDto.class));
@@ -55,7 +69,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Integer id) {
-        ModelMapper modelMapper = new ModelMapper();
         User user = userRepo.findById(id).orElse(null);
         if (user != null) {
             return modelMapper.map(user,UserDto.class);
@@ -65,7 +78,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Integer id, UserDto userDto) {
-        ModelMapper modelMapper = new ModelMapper();
         User existingUser = userRepo.findById(id).orElse(null);
         if (existingUser != null) {
             // Update user fields
