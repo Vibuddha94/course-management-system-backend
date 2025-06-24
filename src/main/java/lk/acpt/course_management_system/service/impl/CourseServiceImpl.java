@@ -2,7 +2,9 @@ package lk.acpt.course_management_system.service.impl;
 
 import lk.acpt.course_management_system.dto.CourseDto;
 import lk.acpt.course_management_system.entity.Course;
+import lk.acpt.course_management_system.entity.Instructor;
 import lk.acpt.course_management_system.repo.CourseRepo;
+import lk.acpt.course_management_system.repo.InstructorRepo;
 import lk.acpt.course_management_system.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,13 @@ import java.util.List;
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepo courseRepo;
+    private final InstructorRepo instructorRepo;
     private final ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public CourseServiceImpl(CourseRepo courseRepo) {
+    public CourseServiceImpl(CourseRepo courseRepo, InstructorRepo instructorRepo) {
         this.courseRepo = courseRepo;
+        this.instructorRepo = instructorRepo;
     }
 
     @Override
@@ -34,9 +38,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDto saveCourse(CourseDto courseDto) {
-        Course savedCourse = courseRepo.save(modelMapper.map(courseDto, Course.class));
-        return modelMapper.map(savedCourse, CourseDto.class);
+    public CourseDto saveCourse(Integer id, CourseDto courseDto) {
+        Instructor instructor = instructorRepo.findById(id).orElse(null);
+        if (instructor == null) {
+            return null; // or throw an exception
+        }
+        Course course = modelMapper.map(courseDto, Course.class);
+        course.setInstructor(instructor);
+        return modelMapper.map(courseRepo.save(course), CourseDto.class);
     }
 
     @Override

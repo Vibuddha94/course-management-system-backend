@@ -11,7 +11,7 @@ public interface CourseService {
 
     CourseDto getCourseById(Integer id);
 
-    CourseDto saveCourse(CourseDto courseDto);
+    CourseDto saveCourse(Integer id,CourseDto courseDto);
 
     CourseDto updateCourse(Integer id, CourseDto courseDto);
 
