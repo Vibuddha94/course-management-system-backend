@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
             user.setInstructor(instructor);
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
-        }else if (userDto.getStudent() != null) {
+        } else if (userDto.getStudent() != null) {
             // Map StudentDto to Student entity
             Student student = modelMapper.map(userDto.getStudent(), Student.class);
             // Set bidirectional relationship
@@ -54,15 +54,15 @@ public class UserServiceImpl implements UserService {
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
         } else {
-            return  null;
+            return null;
         }
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         ArrayList<UserDto> users = new ArrayList<>();
-        for(User user: userRepo.findAll()){
-            users.add(modelMapper.map(user,UserDto.class));
+        for (User user : userRepo.findAll()) {
+            users.add(modelMapper.map(user, UserDto.class));
         }
         return users;
     }
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Integer id) {
         User user = userRepo.findById(id).orElse(null);
         if (user != null) {
-            return modelMapper.map(user,UserDto.class);
+            return modelMapper.map(user, UserDto.class);
         }
         return null;
     }
@@ -97,7 +97,17 @@ public class UserServiceImpl implements UserService {
                     return null;
                 }
             }
-
+            // If student details are provided, update or create the student
+            if (userDto.getStudent() != null) {
+                Student existingStudent = studentRepo.findByUserId(id).orElse(null);
+                if (existingStudent != null) {
+                    existingStudent.setAddress(userDto.getStudent().getAddress());
+                    existingStudent.setAge(userDto.getStudent().getAge());
+                    studentRepo.save(existingStudent);
+                } else {
+                    return null;
+                }
+            }
             User updatedUser = userRepo.save(existingUser);
             return modelMapper.map(updatedUser, UserDto.class);
         }
@@ -106,13 +116,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean deleteUser(Integer id) {
-    if (userRepo.existsById(id)) {
-        instructorRepo.deleteByUserId(id);
-        if (instructorRepo.findByUserId(id).isEmpty()) {
-            userRepo.deleteById(id);
+        User existingUser = userRepo.findById(id).orElse(null);
+        if (existingUser != null) {
+            // Delete associated instructor if exists
+            if (existingUser.getInstructor() != null) {
+                instructorRepo.deleteByUserId(id);
+            }
+            // Delete associated student if exists
+            if (existingUser.getStudent() != null) {
+                studentRepo.deleteByUserId(id);
+            }
+            // Delete the user
+            userRepo.delete(existingUser);
+            return true;
         }
-        return !userRepo.existsById(id);
-    }
         return false;
     }
 }
