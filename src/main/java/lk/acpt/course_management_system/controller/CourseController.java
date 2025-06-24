@@ -27,7 +27,7 @@ public class CourseController {
         return courseService.getCourseById(id);
     }
 
-    @PostMapping("{id}")
+    @PostMapping("/{id}")
     public CourseDto saveCourse(@PathVariable Integer id,@RequestBody  CourseDto courseDto) {
         return courseService.saveCourse(id, courseDto);
     }
