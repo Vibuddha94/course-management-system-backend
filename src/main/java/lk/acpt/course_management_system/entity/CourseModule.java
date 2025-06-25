@@ -1,27 +1,25 @@
 package lk.acpt.course_management_system.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Course {
+@Table(name = "course_module") // Optional: specify table name
+public class CourseModule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String description;
+    private String url;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "instructor_id")
-    private Instructor instructor;
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseModule> courseModules;
+    @JoinColumn(name = "course_id") // Foreign key column
+    private Course course;
 }
