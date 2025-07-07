@@ -23,5 +23,5 @@ public class Course {
     private Instructor instructor;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseModule> courseModules;
+    private List<CourseMaterial> courseMaterials;
 }
