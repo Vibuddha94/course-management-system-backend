@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 public class StorageDto {
     private String location = "F:\\Projects\\Course Management System\\upload-dir\\";
-    ;
 
     public StorageDto(String location) {
         this.location += location;
