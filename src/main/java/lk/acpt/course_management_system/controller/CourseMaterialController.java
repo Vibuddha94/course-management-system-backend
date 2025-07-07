@@ -2,15 +2,21 @@ package lk.acpt.course_management_system.controller;
 
 import lk.acpt.course_management_system.dto.CourseMaterialDto;
 import lk.acpt.course_management_system.dto.StorageDto;
+import lk.acpt.course_management_system.exception.StorageFileNotFoundException;
 import lk.acpt.course_management_system.service.CourseMaterialService;
 import lk.acpt.course_management_system.service.CourseService;
 import lk.acpt.course_management_system.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +41,44 @@ public class CourseMaterialController {
     }
 
     @GetMapping("/{id}")
-    public CourseMaterialDto getCourseModuleById(@PathVariable Integer id) {
-        return courseMaterialService.getCourseMaterialById(id);
+    public ResponseEntity<byte[]> getCourseModuleById(@PathVariable Integer id) {
+        CourseMaterialDto courseMaterial = courseMaterialService.getCourseMaterialById(id);
+        if (courseMaterial == null) {
+            return null;
+        }
+
+        String location = courseMaterial.getUrl();
+        String filename = courseMaterial.getSavedName();
+
+        try {
+            // Load the file as a resource
+            Resource fileResource = storageService.loadAsResource(filename, location);
+            // If the resource is null or does not exist, return a 404
+            if (fileResource == null || !fileResource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            // Read the file as an InputStream
+            InputStream inputStream = fileResource.getInputStream();
+            
+            // Read the InputStream as a byte array
+            byte[] fileBytes = inputStream.readAllBytes();
+
+            // Set the HTTP headers for the response
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDispositionFormData("attachment", courseMaterial.getOriginalName());
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            // Return the file as a byte array
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(fileBytes);
+
+        } catch (StorageFileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (IOException e) {
+            // If something goes wrong, return a 500
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PostMapping("/{courseId}")
