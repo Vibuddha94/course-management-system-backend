@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,9 +37,14 @@ public class CourseMaterialServiceImpl implements CourseMaterialService {
     }
 
     @Override
-    public List<CourseMaterialDto> getAllCourseMaterials() {
-        return courseMaterialRepo.findAll().stream()
-                .map(courseMaterial -> modelMapper.map(courseMaterial, CourseMaterialDto.class)).toList();
+    public List<CourseMaterialDto> getAllByCourseId(Integer courseId) {
+        return courseMaterialRepo.findAllByCourse_Id(courseId).stream()
+                .map(courseMaterial -> {
+                    CourseMaterialDto courseMaterialDto = modelMapper.map(courseMaterial, CourseMaterialDto.class);
+                    courseMaterialDto.setSavedName("");
+                    courseMaterialDto.setUrl("");
+                    return courseMaterialDto;
+                }).toList();
     }
 
     @Override
@@ -65,5 +71,11 @@ public class CourseMaterialServiceImpl implements CourseMaterialService {
             courseMaterialRepo.deleteById(id);
         }
         return !courseMaterialRepo.existsById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllCourseMaterials(Integer courseId) {
+        courseMaterialRepo.deleteAllByCourse_Id(courseId);
     }
 }

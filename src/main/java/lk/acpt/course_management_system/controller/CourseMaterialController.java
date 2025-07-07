@@ -35,9 +35,16 @@ public class CourseMaterialController {
         this.courseMaterialService = courseMaterialService;
     }
 
-    @GetMapping
-    public List<CourseMaterialDto> getCourseModules() {
-        return courseMaterialService.getAllCourseMaterials();
+    @GetMapping("/get/all/{courseId}")
+    public ResponseEntity<List<CourseMaterialDto>> getCourseModules(@PathVariable Integer courseId) {
+        if (courseService.getCourseById(courseId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<CourseMaterialDto> allByCourseId = courseMaterialService.getAllByCourseId(courseId);
+        if (allByCourseId == null || allByCourseId.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(allByCourseId);
     }
 
     @GetMapping("/{id}")
@@ -139,6 +146,31 @@ public class CourseMaterialController {
             return ResponseEntity.ok().body("File deleted successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found or could not be deleted");
+        }
+    }
+
+    @DeleteMapping("/delete/all/{courseId}")
+    public ResponseEntity<?> deleteAllCourseModules(@PathVariable Integer courseId) {
+        try {
+            String courseName = courseService.getCourseById(courseId).getName();
+
+            if (courseName == null || courseName.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Course name is required");
+            }
+            StorageDto storageDto = new StorageDto(courseName);
+            Boolean del = storageService.deleteAll(storageDto);
+
+            if (!del) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete all files");
+            }
+
+            courseMaterialService.deleteAllCourseMaterials(courseId);
+
+            return ResponseEntity.ok().body("All files deleted successfully");
+        } catch (NullPointerException e) {
+            return ResponseEntity.badRequest().body("Invalid course ID");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete all files");
         }
     }
 }
