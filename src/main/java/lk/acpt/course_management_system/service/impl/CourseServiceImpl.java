@@ -3,8 +3,8 @@ package lk.acpt.course_management_system.service.impl;
 import lk.acpt.course_management_system.dto.CourseDto;
 import lk.acpt.course_management_system.entity.Course;
 import lk.acpt.course_management_system.entity.Instructor;
-import lk.acpt.course_management_system.repo.CourseRepo;
-import lk.acpt.course_management_system.repo.InstructorRepo;
+import lk.acpt.course_management_system.repository.CourseRepo;
+import lk.acpt.course_management_system.repository.InstructorRepo;
 import lk.acpt.course_management_system.service.CourseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +61,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Boolean deleteCourse(Integer id) {
-    if (courseRepo.existsById(id)) {
-        courseRepo.deleteById(id);
-    }
+        if (courseRepo.existsById(id)) {
+            courseRepo.deleteById(id);
+        }
         return !courseRepo.existsById(id);
     }
 }

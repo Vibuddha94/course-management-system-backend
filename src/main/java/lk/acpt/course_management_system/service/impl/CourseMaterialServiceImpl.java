@@ -2,8 +2,8 @@ package lk.acpt.course_management_system.service.impl;
 
 import lk.acpt.course_management_system.dto.CourseMaterialDto;
 import lk.acpt.course_management_system.entity.CourseMaterial;
-import lk.acpt.course_management_system.repo.CourseMaterialRepo;
-import lk.acpt.course_management_system.repo.CourseRepo;
+import lk.acpt.course_management_system.repository.CourseMaterialRepo;
+import lk.acpt.course_management_system.repository.CourseRepo;
 import lk.acpt.course_management_system.service.CourseMaterialService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
