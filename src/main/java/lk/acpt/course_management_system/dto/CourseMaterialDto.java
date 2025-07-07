@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CourseModuleDto {
+public class CourseMaterialDto {
     private Integer id;
-    private String name;
+    private String originalName;
+    private String savedName;
     private String url;
-    private Integer courseId;
 }

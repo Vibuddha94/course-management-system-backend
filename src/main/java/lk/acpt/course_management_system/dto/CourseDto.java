@@ -15,5 +15,5 @@ public class CourseDto {
     private String name;
     private String description;
     private Instructor instructor;
-    private List<CourseModuleDto> courseModules;
+    private List<CourseMaterialDto> courseModules;
 }

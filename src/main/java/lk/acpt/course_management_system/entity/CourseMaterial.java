@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "course_module") // Optional: specify table name
-public class CourseModule {
+@Table(name = "course_material") // Optional: specify table name
+public class CourseMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    private String originalName;
+    private String savedName;
     private String url;
 
     @JsonIgnore
