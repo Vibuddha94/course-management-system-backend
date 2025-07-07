@@ -1,4 +1,4 @@
-package lk.acpt.course_management_system.repo;
+package lk.acpt.course_management_system.repository;
 
 import lk.acpt.course_management_system.entity.CourseMaterial;
 import org.springframework.data.jpa.repository.JpaRepository;
