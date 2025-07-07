@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
 
 @Service
 public class StorageServiceImpl implements StorageService {
@@ -76,23 +75,6 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public Stream<Path> loadAll(StorageDto storageDto) {
-        if (storageDto.getLocation().trim().isEmpty()) {
-            throw new StorageException("File upload location can not be Empty.");
-        }
-        Path rootLocation = Paths.get(storageDto.getLocation());
-        try (Stream<Path> walk = Files.walk(rootLocation, 1)) {
-            return walk.filter(path -> !path.equals(rootLocation))
-                    .map(rootLocation::relativize)
-                    .toList()
-                    .stream();
-
-        } catch (IOException e) {
-            throw new StorageException("Failed to read stored files", e);
-        }
-    }
-
-    @Override
     public Path load(String filename, Path rootLocation) {
         return rootLocation.resolve(filename);
     }
@@ -118,13 +100,17 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public void deleteAll(StorageDto storageDto) {
-        Path rootLocation = Paths.get(storageDto.getLocation());
-        FileSystemUtils.deleteRecursively(rootLocation.toFile());
+    public Boolean deleteAll(StorageDto storageDto) {
+        try {
+            Path rootLocation = Paths.get(storageDto.getLocation());
+            return FileSystemUtils.deleteRecursively(rootLocation.toFile());
+        } catch (IllegalStateException e) {
+            throw new StorageException("Failed to delete all files in " + storageDto.getLocation(), e);
+        }
     }
 
     @Override
-    public boolean delete(String filePath, String fileName) {
+    public Boolean delete(String filePath, String fileName) {
         try {
             Path file = Paths.get(filePath, fileName);
             if (Files.isRegularFile(file)) {

@@ -7,11 +7,13 @@ import java.util.List;
 
 @Service
 public interface CourseMaterialService {
-    List<CourseMaterialDto> getAllCourseMaterials();
+    List<CourseMaterialDto> getAllByCourseId(Integer courseId);
 
     CourseMaterialDto getCourseMaterialById(Integer id);
 
     CourseMaterialDto saveCourseMaterial(Integer courseId, CourseMaterialDto courseMaterialDto);
 
     Boolean deleteCourseMaterial(Integer id);
+
+    void deleteAllCourseMaterials(Integer courseId);
 }
