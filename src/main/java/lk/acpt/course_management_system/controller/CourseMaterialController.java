@@ -59,7 +59,7 @@ public class CourseMaterialController {
             }
             // Read the file as an InputStream
             InputStream inputStream = fileResource.getInputStream();
-            
+
             // Read the InputStream as a byte array
             byte[] fileBytes = inputStream.readAllBytes();
 
@@ -118,7 +118,27 @@ public class CourseMaterialController {
     }
 
     @DeleteMapping("/{id}")
-    public Boolean deleteCourseModule(@PathVariable Integer id) {
-        return courseMaterialService.deleteCourseMaterial(id);
+    public ResponseEntity<?> deleteCourseModule(@PathVariable Integer id) {
+        CourseMaterialDto courseMaterial = courseMaterialService.getCourseMaterialById(id);
+        if (courseMaterial == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+        }
+        String filePath = courseMaterial.getUrl();
+        String fileName = courseMaterial.getSavedName();
+
+        if (filePath == null || filePath.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("File path is required");
+        }
+
+        boolean deleted = storageService.delete(filePath, fileName);
+        if (deleted) {
+            Boolean deletedResult = courseMaterialService.deleteCourseMaterial(id);
+            if (!deletedResult) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            return ResponseEntity.ok().body("File deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found or could not be deleted");
+        }
     }
 }

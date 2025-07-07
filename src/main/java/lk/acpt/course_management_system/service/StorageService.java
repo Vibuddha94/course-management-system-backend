@@ -21,7 +21,7 @@ public interface StorageService {
 
     Resource loadAsResource(String filename, String location);
 
-    boolean delete(String filePath);
+    boolean delete(String filePath, String fileName);
 
     void deleteAll(StorageDto storageDto);
 
