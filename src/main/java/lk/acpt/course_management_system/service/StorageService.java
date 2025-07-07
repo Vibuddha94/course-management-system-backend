@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 @Service
 public interface StorageService {
@@ -15,14 +14,12 @@ public interface StorageService {
 
     String[] store(MultipartFile file, StorageDto storageDto);
 
-    Stream<Path> loadAll(StorageDto storageDto);
-
     Path load(String filename, Path rootLocation);
 
     Resource loadAsResource(String filename, String location);
 
-    boolean delete(String filePath, String fileName);
+    Boolean delete(String filePath, String fileName);
 
-    void deleteAll(StorageDto storageDto);
+    Boolean deleteAll(StorageDto storageDto);
 
 }
