@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,30 +40,35 @@ public class CourseMaterialController {
     }
 
     @PostMapping("/{courseId}")
-    public ResponseEntity<CourseMaterialDto> saveCourseMaterial(@PathVariable Integer courseId, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<List<CourseMaterialDto>> saveCourseMaterials(@PathVariable Integer courseId, @RequestParam("files") MultipartFile[] files) {
         try {
-            CourseMaterialDto courseMaterialDto = new CourseMaterialDto();
-            courseMaterialDto.setOriginalName(file.getOriginalFilename());
+            List<CourseMaterialDto> courseMaterials = new ArrayList<>();
+            for (MultipartFile file : files) {
+                CourseMaterialDto courseMaterialDto = new CourseMaterialDto();
+                courseMaterialDto.setOriginalName(file.getOriginalFilename());
 
-            if (courseService.getCourseById(courseId) == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                if (courseService.getCourseById(courseId) == null) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                }
+
+                String[] result = storageService.store(file, new StorageDto(courseService.getCourseById(courseId)
+                        .getName()));
+                courseMaterialDto.setSavedName(result[0]);
+                courseMaterialDto.setUrl(result[1]);
+
+                CourseMaterialDto savedCourseMaterial = courseMaterialService.saveCourseMaterial(courseId, courseMaterialDto);
+                if (savedCourseMaterial == null) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+
+                // Clear sensitive data before sending response
+                savedCourseMaterial.setSavedName("");
+                savedCourseMaterial.setUrl("");
+
+                courseMaterials.add(savedCourseMaterial);
             }
 
-            String[] result = storageService.store(file, new StorageDto(courseService.getCourseById(courseId)
-                    .getName()));
-            courseMaterialDto.setSavedName(result[0]);
-            courseMaterialDto.setUrl(result[1]);
-
-            CourseMaterialDto savedCourseMaterial = courseMaterialService.saveCourseMaterial(courseId, courseMaterialDto);
-            if (savedCourseMaterial == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-
-            // Clear sensitive data before sending response
-            savedCourseMaterial.setSavedName("");
-            savedCourseMaterial.setUrl("");
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedCourseMaterial);
+            return ResponseEntity.status(HttpStatus.CREATED).body(courseMaterials);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
