@@ -22,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/course-modules")
+@CrossOrigin(origins = "*")
 public class CourseMaterialController {
 
     private final CourseMaterialService courseMaterialService;

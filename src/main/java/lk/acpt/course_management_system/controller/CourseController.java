@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/course")
+@CrossOrigin(origins = "*")
 public class CourseController {
     private final CourseService courseService;
 
@@ -18,17 +19,17 @@ public class CourseController {
     }
 
     @GetMapping
-    public List<CourseDto> getAllCourses(){
+    public List<CourseDto> getAllCourses() {
         return courseService.getAllCourses();
     }
 
     @GetMapping("/{id}")
-    public CourseDto getCourseById(@PathVariable  Integer id){
+    public CourseDto getCourseById(@PathVariable Integer id) {
         return courseService.getCourseById(id);
     }
 
     @PostMapping("/{id}")
-    public CourseDto saveCourse(@PathVariable Integer id,@RequestBody  CourseDto courseDto) {
+    public CourseDto saveCourse(@PathVariable Integer id, @RequestBody CourseDto courseDto) {
         return courseService.saveCourse(id, courseDto);
     }
 
@@ -38,7 +39,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    public Boolean deleteCourse(@PathVariable Integer id){
+    public Boolean deleteCourse(@PathVariable Integer id) {
         return courseService.deleteCourse(id);
     }
 }
