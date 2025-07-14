@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
             user.setStudent(student);
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
+        } else if (userDto.getRole().equals("ADMIN")) {
+            User savedUser = userRepo.save(user);
+            return modelMapper.map(savedUser, UserDto.class);
         } else {
             return null;
         }
