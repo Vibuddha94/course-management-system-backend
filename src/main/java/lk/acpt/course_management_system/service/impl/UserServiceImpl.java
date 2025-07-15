@@ -80,6 +80,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getAllByRole(String role) {
+        List<User> users = userRepo.findAllByRole(role);
+        return users.stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .toList();
+    }
+
+    @Override
     public UserDto updateUser(Integer id, UserDto userDto) {
         User existingUser = userRepo.findById(id).orElse(null);
         if (existingUser != null) {
