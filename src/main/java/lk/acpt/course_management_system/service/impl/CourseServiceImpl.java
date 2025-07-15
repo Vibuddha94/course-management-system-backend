@@ -39,7 +39,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseDto saveCourse(Integer id, CourseDto courseDto) {
-        Instructor instructor = instructorRepo.findById(id).orElse(null);
+        Instructor instructor = instructorRepo.findByUserId(id).orElse(null);
         if (instructor == null) {
             return null; // or throw an exception
         }
