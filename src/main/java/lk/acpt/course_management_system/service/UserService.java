@@ -8,8 +8,14 @@ import java.util.List;
 @Service
 public interface UserService {
     UserDto saveUser(UserDto userDto);
+
     List<UserDto> getAllUsers();
+
     UserDto getUserById(Integer id);
+
+    List<UserDto> getAllByRole(String role);
+
     UserDto updateUser(Integer id, UserDto userDto);
+
     Boolean deleteUser(Integer id);
 }
