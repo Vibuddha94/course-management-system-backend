@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
                 UserDto userDto = modelMapper.map(user, UserDto.class);
                 // Hardcoded token for now
                 String token = "sample-jwt-token-123456";
-                return new AuthResponse(userDto.getId(), userDto.getRole(), token);
+                return new AuthResponse(userDto.getId(), userDto.getName(), userDto.getRole(), token);
             }
         }
         throw new RuntimeException("Invalid email or password");
