@@ -14,7 +14,6 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class UserController {
 
-
     private final UserService userService;
 
     @Autowired

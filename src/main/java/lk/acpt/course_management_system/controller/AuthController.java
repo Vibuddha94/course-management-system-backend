@@ -2,9 +2,16 @@ package lk.acpt.course_management_system.controller;
 
 import lk.acpt.course_management_system.dto.AuthResponse;
 import lk.acpt.course_management_system.dto.LoginRequest;
+import lk.acpt.course_management_system.dto.UserDto;
+import lk.acpt.course_management_system.security.CustomUserDetails;
+import lk.acpt.course_management_system.security.JwtService;
 import lk.acpt.course_management_system.service.AuthService;
+import lk.acpt.course_management_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,12 +19,38 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
+    private final AuthenticationManager authManager;
+    private final JwtService jwtService;
+    private final AuthService authService;
+    private final UserService userService;
+
     @Autowired
-    private AuthService authService;
+    public AuthController(AuthenticationManager authManager, JwtService jwtService, AuthService authService, UserService userService) {
+        this.authManager = authManager;
+        this.jwtService = jwtService;
+        this.authService = authService;
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        AuthResponse response = authService.authenticate(loginRequest);
-        return ResponseEntity.ok(response);
+    public AuthResponse login(@RequestBody LoginRequest request) {
+        Authentication authentication = authManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String token = jwtService.generateToken(userDetails.getUsername());
+
+        AuthResponse authResponse = authService.authenticate(request);
+        authResponse.setToken(token);
+        return authResponse;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
+        UserDto savedUser = userService.saveUser(userDto);
+        if (savedUser == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(savedUser);
     }
 }

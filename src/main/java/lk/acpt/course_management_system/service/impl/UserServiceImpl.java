@@ -10,6 +10,7 @@ import lk.acpt.course_management_system.repository.UserRepo;
 import lk.acpt.course_management_system.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,19 +25,23 @@ public class UserServiceImpl implements UserService {
 
     private final StudentRepo studentRepo;
 
+    private final PasswordEncoder passwordEncoder;
+
     ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public UserServiceImpl(UserRepo userRepo, InstructorRepo instructorRepo, StudentRepo studentRepo) {
+    public UserServiceImpl(UserRepo userRepo, InstructorRepo instructorRepo, StudentRepo studentRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.instructorRepo = instructorRepo;
         this.studentRepo = studentRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDto saveUser(UserDto userDto) {
         // Map UserDto to User entity
         User user = modelMapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword())); // Encode password
         if (userDto.getInstructor() != null) {
             // Map InstructorDto to Instructor entity
             Instructor instructor = modelMapper.map(userDto.getInstructor(), Instructor.class);
