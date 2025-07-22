@@ -13,11 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthenticationManager authManager;
@@ -41,7 +43,7 @@ public class AuthController {
             adminUser.setName("Admin Admin");
             adminUser.setEmail("admin@admin.com");
             adminUser.setPassword("admin123");
-            adminUser.setRole("ADMIN");
+            adminUser.setRole("ROLE_ADMIN");
             UserDto savedUser = userService.saveUser(adminUser);
             if (savedUser == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -60,7 +62,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
-        if (userDto.getRole().equals("Student")) {
+        if (userDto.getRole().equals("ROLE_STUDENT")) {
             UserDto savedUser = userService.saveUser(userDto);
             if (savedUser == null) {
                 return ResponseEntity.badRequest().build();
