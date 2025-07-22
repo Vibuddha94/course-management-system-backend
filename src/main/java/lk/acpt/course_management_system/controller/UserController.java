@@ -4,6 +4,7 @@ import lk.acpt.course_management_system.dto.UserDto;
 import lk.acpt.course_management_system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.List;
 @RequestMapping("/api/v1/user")
 @CrossOrigin(origins = "*")
 public class UserController {
-
 
     private final UserService userService;
 
@@ -46,6 +46,7 @@ public class UserController {
         return ResponseEntity.ok(usersByRole);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto) {
         UserDto savedUser = userService.saveUser(userDto);
@@ -64,6 +65,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteUser(@PathVariable Integer id) {
         Boolean deleted = userService.deleteUser(id);
