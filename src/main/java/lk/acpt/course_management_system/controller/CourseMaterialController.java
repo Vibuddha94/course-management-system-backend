@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,6 +90,7 @@ public class CourseMaterialController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('INSTRUCTOR')")
     @PostMapping("/{courseId}")
     public ResponseEntity<List<CourseMaterialDto>> saveCourseMaterials(@PathVariable Integer courseId, @RequestParam("files") MultipartFile[] files) {
         try {
@@ -125,6 +127,7 @@ public class CourseMaterialController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('INSTRUCTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCourseModule(@PathVariable Integer id) {
         CourseMaterialDto courseMaterial = courseMaterialService.getCourseMaterialById(id);
@@ -150,6 +153,7 @@ public class CourseMaterialController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('INSTRUCTOR')")
     @DeleteMapping("/delete/all/{courseId}")
     public ResponseEntity<?> deleteAllCourseModules(@PathVariable Integer courseId) {
         try {

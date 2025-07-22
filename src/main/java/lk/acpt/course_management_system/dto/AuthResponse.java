@@ -12,4 +12,10 @@ public class AuthResponse {
     private String name;
     private String role;
     private String token;
+
+    public AuthResponse(int id, String name, String role) {
+        this.id = id;
+        this.name = name;
+        this.role = role;
+    }
 }
