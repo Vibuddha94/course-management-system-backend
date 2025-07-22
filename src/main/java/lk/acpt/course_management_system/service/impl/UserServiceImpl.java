@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
             user.setStudent(student);
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
-        } else if (userDto.getRole().equals("ADMIN")) {
+        } else if (userDto.getRole().equals("ROLE_ADMIN")) {
             User savedUser = userRepo.save(user);
             return modelMapper.map(savedUser, UserDto.class);
         } else {
@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
             // Update user fields
             existingUser.setName(userDto.getName());
             existingUser.setEmail(userDto.getEmail());
-            existingUser.setPassword(userDto.getPassword());
+            existingUser.setPassword(passwordEncoder.encode(userDto.getPassword())); // Encode password
             existingUser.setRole(userDto.getRole());
             existingUser.setContactNumber(userDto.getContactNumber());
 
