@@ -46,6 +46,7 @@ public class AuthController {
             adminUser.setRole("ROLE_ADMIN");
             UserDto savedUser = userService.saveUser(adminUser);
             if (savedUser == null) {
+                System.out.println("executed 2");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
